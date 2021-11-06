@@ -1,5 +1,5 @@
 --- 
-title: "Genshin Impact Analysis"
+title: "Analysis of Game Character Strengths in Genshin Impact"
 author: "Zhifeng Zhang and Ruilin Liu"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
