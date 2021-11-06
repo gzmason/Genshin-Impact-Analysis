@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "Genshin Impact Analysis"
+author: "Zhifeng Zhang and Ruilin Liu"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
