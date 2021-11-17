@@ -2,7 +2,6 @@ library(tidyverse)
 library(rvest)  
 library(robotstxt) 
 library(readxl)
-library(hash)
 
 read_excel_allsheets <- function(filename, tibble = FALSE) {
   sheets <- readxl::excel_sheets(filename)
@@ -10,21 +9,13 @@ read_excel_allsheets <- function(filename, tibble = FALSE) {
   if(!tibble) x <- lapply(x, as.data.frame)
   names(x) <- sheets
   
-
-  to_return = data.frame(matrix(ncol = 0, nrow = 0))
   
-  i <- 1
+  to_return = data.frame(matrix(ncol = 0, nrow = 0))
+
   for (df in x){
-    if(i == 1){
-      header = names(df)
-    }else{
-      setNames(df, header)
-    }
-    print(head(df,4))
     to_return = rbind(to_return, df)
   }
-  i <- i + 1
-  
+
   return (to_return)
 }
 
@@ -67,21 +58,7 @@ for (weapon_url in weapons_urls){
   weapon <- rbind(weapon, data.frame(weapon_name_eng, weapon_name_cn))
 }
   
-
-dirs = c("sept_late/", "oct_early/", "oct_late/", "nov_early/")
-files = c("battle_stats.xlsx", "character_artifact.xlsx", "character_owning.")
-
-#for (i in seq(1:3)){
-#  battle_stats <- read_excel_allsheets(paste( dirs[i], files[1], sep = ""))
-#  character_artifact <- read_excel_allsheets(paste("data/", dirs[i], files[2]))
-#  character_owning <- read_excel_allsheets(paste("data/", dirs[i], files[3]))
-#}
-
-
-battle_stats <- read_excel_allsheets(paste( dirs[3], files[1], sep = ""))
-
-# battle_stats <- read_excel_allsheets(paste("data/)
-
+# Function to apply for translation
 fun_char <- function(x) {
   for(i in seq(1,nrow(character))){
     if (x == character[i, 2]){
@@ -98,10 +75,29 @@ fun_artifact <- function(x) {
   }
 }
 
-battle_stats$avatar <- lapply(battle_stats$avatar, fun_char)
-character_artifact$avatar <- lapply(character_artifact$avatar, fun_char)
-character_artifact$relicSet <- lapply(character_artifact$relicSet, fun_artifact)
-character_owning$avatar <- lapply(character_owning$avatar, fun_char)
+dirs = c("sept_late/", "oct_early/", "oct_late/", "nov_early/")
+files = c("battle_stats.xlsx", "character_artifact.xlsx", "character_owning.xlsx")
 
-# write.csv(battle_stats, "data/nov_early/battle_stats_translated.csv")
+for (i in 1:3){
+  battle_stats <- read_excel_allsheets(paste( dirs[i], files[1], sep = ""))
+  battle_stats$avatar <- lapply(battle_stats$avatar, fun_char)
+  battle_stats <- apply(battle_stats,2,as.character)
+  write.csv(battle_stats, paste(dirs[i], "battle_stats_translated.csv",sep = ""))
+  
+  
+  character_artifact <- read_excel_allsheets(paste( dirs[i], files[2], sep = ""))
+  character_artifact$avatar <- lapply(character_artifact$avatar, fun_char)
+  character_artifact$relicSet <- lapply(character_artifact$relicSet, fun_artifact)
+  character_artifact <- apply(character_artifact,2,as.character)
+  write.csv(character_artifact, paste(dirs[i], "character_artifact_translated.csv",sep = ""))
+  
+  
+  
+  character_owning <- read_excel_allsheets(paste( dirs[i], files[3], sep = ""))
+  character_owning$avatar <- lapply(character_owning$avatar, fun_char)
+  character_owning <- apply(character_owning,2,as.character)
+  write.csv(character_owning, paste(dirs[i], "character_owning_translated.csv",sep = ""))
+  
+}
+
 
