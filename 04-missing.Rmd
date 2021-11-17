@@ -1,1 +1,176 @@
 # Missing values
+
+```{r setup, include=FALSE}
+# this prevents package loading message from appearing in the rendered version of your problem set
+knitr::opts_chunk$set(warning = FALSE,
+                      message = FALSE)
+```
+
+
+It is observed that all of our data do not have missing values. 
+
+```{r}
+library(tidyverse)
+library(dplyr)
+```
+
+```{r warning=F, message=F ,echo=FALSE}
+plot_missing <- function(df, percent = FALSE){
+  library(tidyverse)
+  library(patchwork)
+  library(reshape2)
+  missing_patterns <- data.frame(is.na(df)) %>%
+    group_by_all() %>%
+    count(name = "count", sort = TRUE) %>%
+    ungroup()
+
+  # The following codes plot the top bar chart
+  # sort by missing times
+  mylist <- list()
+  for (name in names(missing_patterns)){
+    if (name != "count") {
+      totalMissingCount <- 0
+      for (i in seq(1,nrow(missing_patterns))) {
+        if(missing_patterns[i,name] == TRUE) {
+          totalMissingCount <- totalMissingCount + missing_patterns$count[i]
+        }
+      }
+      mylist[[name]] <- totalMissingCount
+    }
+  }
+  mylist <- mylist[order(-unlist(mylist))]
+  missingOrder <- names(mylist)
+  
+  # plot the bar chart for missing times of each column
+  num_rows_missing <- unlist(mylist)
+  variable <- missingOrder
+  variable <- factor(variable,levels=missingOrder)
+  
+  dfTop <- data.frame(num_rows_missing, variable)
+  
+  if(percent == TRUE){
+    for(i in 1:nrow(dfTop)){
+      dfTop[i,1] = (dfTop[i,1]/ nrow(df)) * 100
+    }
+    topPlot <- ggplot(data=dfTop, aes(x=variable, y=num_rows_missing)) +
+      geom_bar(stat="identity", fill="steelblue") + xlab("")+
+      ylim(0,100)+
+      labs(y = "% rows missing:")
+  }else{
+    topPlot <- ggplot(data=dfTop, aes(x=variable, y=num_rows_missing)) +
+      geom_bar(stat="identity", fill="steelblue") + xlab("")+
+      labs(y = "num rows missing:")
+  }
+  
+  
+  # The following codes plot the main plot
+  
+  # drop the count column
+  missing_patterns_noCount <- missing_patterns[ , !(names(missing_patterns) %in% c("count"))]
+  
+  #convert True/False to 1/0
+  cols <- sapply(missing_patterns_noCount, is.logical)
+  missing_patterns_noCount[,cols] <- lapply(missing_patterns_noCount[,cols], as.numeric)
+  
+  # mark the row representing the complete case and turn the values to 2
+  completeCaseRow <- -1
+  for (i in seq(1,nrow(missing_patterns_noCount))) {
+    completeCase = TRUE
+    for (name in names(missing_patterns_noCount)) {
+      if(missing_patterns_noCount[i,name] == 1) {
+        completeCase = FALSE
+      }
+    }
+    if (completeCase) {
+      completeCaseRow <- i
+      for (name in names(missing_patterns_noCount)) {
+        missing_patterns_noCount[i,name] = 2
+      }
+      break
+    }
+  }
+  
+  # number the pattern (1,2,3,4,5,6,...)
+  missing_patterns_noCount$MissingPattern<-seq(from=1,to=nrow(missing_patterns_noCount))
+  
+  # turn it to long table
+  missing_patterns_noCount_long <- pivot_longer(missing_patterns_noCount, !MissingPattern,names_to = "variable", values_to = "value")
+  missing_patterns_noCount_long$value <- factor(missing_patterns_noCount_long$value)
+  
+  # turn it to factor with order
+  missing_patterns_noCount_long$variable <- factor(missing_patterns_noCount_long$variable,levels=missingOrder)
+  
+  #plot the main graph
+  mainPlot <- ggplot(missing_patterns_noCount_long, aes(x = variable, y = MissingPattern, fill = value)) + 
+    geom_tile(color = "white",lwd = 0.5,linetype = 1,show.legend = FALSE) +
+    #scale_fill_manual(values = c("grey", "purple", "grey"))  + 
+    scale_fill_manual(values = c(alpha("grey",0.35), alpha("purple",0.5), "grey"))  + 
+    scale_y_reverse(breaks = seq(1, nrow(missing_patterns_noCount), len = nrow(missing_patterns_noCount)))+
+    ylab("missing pattern")
+  
+  if (completeCaseRow != -1) {
+    mainPlot <- mainPlot + annotate("text",  x=length(missing_patterns_noCount)/2, y = completeCaseRow, label = "complete cases")
+  }
+  
+  
+  # The following codes plot the side bar chart
+  patternOrder <- factor(seq(from=1,to=nrow(missing_patterns)))
+  patternCount <- missing_patterns[ , "count"]
+  dfSide <- data.frame(patternOrder, patternCount)
+  
+  if(percent == TRUE){
+    for(i in 1:nrow(dfSide)){
+      dfSide[i,2] = (dfSide[i,2]/ nrow(df)) * 100
+    }
+    
+    sidePlot <- ggplot(data=dfSide, aes(y=patternOrder, x=count)) +
+      geom_bar(stat="identity", fill="steelblue") + 
+      xlab("% rows") + 
+      ylab(" ") +
+      scale_y_discrete(limits = rev(levels(patternOrder)))+
+      xlim(0,100)
+  }else{
+    sidePlot <- ggplot(data=dfSide, aes(y=patternOrder, x=count)) +
+      geom_bar(stat="identity", fill="steelblue") + 
+      xlab("row count") + 
+      ylab(" ") +
+      scale_y_discrete(limits = rev(levels(patternOrder)))
+  }
+  
+
+  
+  library(patchwork)
+  layout <- "
+  AAAA##
+  BBBBCC
+  BBBBCC
+  "
+  topPlot + mainPlot + sidePlot + plot_layout(design = layout)
+
+}
+
+```
+
+
+```{r}
+oct_early_battle_stats <- read_csv("data/oct_early/battle_stats_translated.csv")
+oct_early_battle_stats <- oct_early_battle_stats[,-1]
+oct_early_character_artifact <- read_csv("data/oct_early/character_artifact_translated.csv")
+oct_early_character_artifact <- oct_early_character_artifact[,-1]
+oct_early_character_owning <- read_csv("data/oct_early/character_owning_translated.csv")
+oct_early_character_owning <- oct_early_character_owning[,-1]
+colnames(oct_early_character_owning)[4] <- "constellation"
+```
+
+```{r, echo = TRUE}
+plot_missing(oct_early_battle_stats, percent = TRUE)
+```
+
+
+```{r, echo = TRUE}
+plot_missing(oct_early_character_artifact, percent = TRUE)
+```
+```{r, echo = TRUE}
+plot_missing(oct_early_character_owning, percent = TRUE)
+```
+
