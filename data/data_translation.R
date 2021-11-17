@@ -78,7 +78,7 @@ fun_artifact <- function(x) {
 dirs = c("sept_late/", "oct_early/", "oct_late/", "nov_early/")
 files = c("battle_stats.xlsx", "character_artifact.xlsx", "character_owning.xlsx")
 
-for (i in 1:3){
+for (i in 1:4){
   battle_stats <- read_excel_allsheets(paste( dirs[i], files[1], sep = ""))
   battle_stats$avatar <- lapply(battle_stats$avatar, fun_char)
   battle_stats <- apply(battle_stats,2,as.character)
