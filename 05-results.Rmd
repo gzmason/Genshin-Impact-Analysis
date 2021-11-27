@@ -1,1 +1,85 @@
 # Results
+```{r, echo=FALSE}
+library(ggplot2)
+library(tidyverse)
+df_septLate <- read.csv(file = 'data/sept_late/battle_stats_translated.csv')
+dfNoLevel_septLate <- df_septLate %>% filter(level == 1)
+
+df_octEarly <- read.csv(file = 'data/oct_early/battle_stats_translated.csv')
+dfNoLevel_octEarly <- df_octEarly %>% filter(level == 1)
+
+df_octLate <- read.csv(file = 'data/oct_late/battle_stats_translated.csv')
+dfNoLevel_octLate <- df_octLate %>% filter(level == 1)
+
+df_novEarly <- read.csv(file = 'data/nov_early/battle_stats_translated.csv')
+dfNoLevel_novEarly <- df_novEarly %>% filter(level == 1)
+```
+
+```{r, echo=FALSE}
+numberOfChallenges_septLate <- nrow(unique(dfNoLevel_septLate[c("uid","floor")]))
+rate_septLate <- dfNoLevel_septLate %>% group_by(avatar) %>% dplyr::summarize(n =n()) %>% arrange(desc(n))
+rate_septLate$n = rate_septLate$n / numberOfChallenges_septLate
+rate_septLate$time = "Sept Late"
+
+numberOfChallenges_octEarly <- nrow(unique(dfNoLevel_octEarly[c("uid","floor")]))
+rate_octEarly <- dfNoLevel_octEarly %>% group_by(avatar) %>% dplyr::summarize(n =n()) %>% arrange(desc(n))
+rate_octEarly$n = rate_octEarly$n / numberOfChallenges_octEarly
+rate_octEarly$time = "Oct Early"
+
+numberOfChallenges_octLate <- nrow(unique(dfNoLevel_octLate[c("uid","floor")]))
+rate_octLate <- dfNoLevel_octLate %>% group_by(avatar) %>% dplyr::summarize(n =n()) %>% arrange(desc(n))
+rate_octLate$n = rate_octLate$n / numberOfChallenges_octLate
+rate_octLate$time = "Oct Late"
+
+numberOfChallenges_novEarly <- nrow(unique(dfNoLevel_novEarly[c("uid","floor")]))
+rate_novEarly <- dfNoLevel_novEarly %>% group_by(avatar) %>% dplyr::summarize(n =n()) %>% arrange(desc(n))
+rate_novEarly$n = rate_novEarly$n / numberOfChallenges_novEarly
+rate_novEarly$time = "Nov Early"
+
+avatar_order <- rate_novEarly$avatar
+
+rate <- rbind(rate_septLate, rate_octEarly, rate_octLate, rate_novEarly)
+rate$time = fct_inorder(rate$time)
+
+p1<-ggplot(data=rate, aes(x=n, y=factor(avatar, levels=rev(avatar_order)))) +
+  geom_point(aes(color = time)) +
+  labs(title="Percentage of Appearance of Characters among all Abyss Challenges", x="Percentage", y="Character")
+p1
+```
+
+```{r, echo=FALSE}
+character_owning_novEarly <- read.csv(file = 'data/nov_early/character_owning_translated.csv')
+```
+```{r, echo=FALSE, fig.width=15, fig.height=12}
+average_constellation_novEarly <- character_owning_novEarly %>%
+  group_by(avatar) %>%
+  summarise_at(vars(actived_constellation_num), list(avg_constellation = mean))
+rate_and_constellation_novEarly <- merge(rate_novEarly,average_constellation_novEarly)
+
+p2<-ggplot(data=rate_and_constellation_novEarly, aes(x=avg_constellation, y=n)) +
+  geom_point() +
+  labs(title="Percentage of Appearance versus Average Constellation", x="Average Constellation", y="Percentage of Appearance") +
+  geom_text(data=rate_and_constellation_novEarly,aes(label=avatar),hjust=0,vjust=1 ,check_overlap = TRUE)
+p2
+```
+
+```{r, echo=FALSE, fig.width=12, fig.height=5}
+average_friendship_novEarly <- character_owning_novEarly %>%
+  group_by(avatar) %>%
+  summarise_at(vars(Fetter), list(avg_friendship = mean))
+rate_and_constellation_and_friendship_novEarly <- merge(rate_novEarly,average_constellation_novEarly)
+rate_and_constellation_and_friendship_novEarly <- merge(rate_and_constellation_and_friendship_novEarly,average_friendship_novEarly)
+names(rate_and_constellation_and_friendship_novEarly)[2]<- "percentage_of_appearance"
+
+rate_and_constellation_and_friendship_novEarly <- subset(rate_and_constellation_and_friendship_novEarly, select = -c(time) )
+
+p3 <- GGally::ggparcoord(data = rate_and_constellation_and_friendship_novEarly, columns=c(2:4), scale="uniminmax")  +
+labs(title="Parallel Coordinate Plot on Percentage of Appearence & Average Constellation & Friendship", x="Character Indicators", y="Uniformized Statistics")
+p3
+```
+
+```{r, echo=FALSE,fig.width=15, fig.height=15}
+p4 <- ggplot(data=character_owning_novEarly, aes(x=reorder(avatar, level, FUN = median), y=level)) + geom_boxplot() + coord_flip() +
+  labs(title="Boxplot on Character Levels", x="Character", y="Level")
+p4
+```
