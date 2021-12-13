@@ -26,6 +26,8 @@ artifact_url = "db/artifact/"
 cn_url = "?lang=CHS"
 eng_url = "?lang=EN"
 
+
+
 # Get character names
 eng_char_page <- read_html(paste(base_url, character_url , eng_url)) 
 cn_char_page <- read_html(paste(base_url, character_url , cn_url))
@@ -35,6 +37,47 @@ char_name_cn = cn_char_page %>% html_nodes(".sea_charname") %>% html_text()
 
 character <- data.frame(char_name_eng, char_name_cn)
 
+# Get character elements and ranking
+ch_page_5 <- read_html("https://game8.co/games/Genshin-Impact/archives/297582")
+char_name_5 = ch_page_5 %>% html_nodes(".tablesorter .a-link") %>% html_text()
+
+ch_page_4 <- read_html("https://game8.co/games/Genshin-Impact/archives/297585")
+char_name_4 = ch_page_4 %>% html_nodes(".tablesorter .a-link") %>% html_text()
+  
+
+character_df <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("character", "element", "ranking")
+colnames(character_df) <- x
+
+for (i in 1:(length(char_name_5)/2) ) {
+  character_df[nrow(character_df) + 1,] = c(char_name_5[2*i-1],char_name_5[2*i], 5 )
+}
+
+for (i in 1:(length(char_name_4)/2) ) {
+  character_df[nrow(character_df) + 1,] = c(char_name_4[2*i-1],char_name_4[2*i], 4 )
+}
+
+
+for(i in 1:length(character_df$character)){
+  if (character_df$character[i] == "Ayaka"){
+    character_df$character[i] = "Kamisato Ayaka"
+  }
+  if (character_df$character[i] == "Kazuha"){
+    character_df$character[i] = "Kaedehara Kazuha"
+  }
+  if(character_df$character[i] == "Raiden"){
+    character_df$character[i] = "Raiden Shogun"
+  }
+  if(character_df$character[i] == "Kokomi"){
+    character_df$character[i] = "Sangonomiya Kokomi"
+  }
+  if(character_df$character[i] == "Sara"){
+    character_df$character[i] = "Kujou Sara"
+  }
+}
+
+  
+write.csv(character_df, "data/character_element_ranking.csv")
 # Get artifact names
 eng_artifact_page <- read_html(paste(base_url, artifact_url , eng_url)) 
 cn_artifact_page <- read_html(paste(base_url, artifact_url , cn_url))

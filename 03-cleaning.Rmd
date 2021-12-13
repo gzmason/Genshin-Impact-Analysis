@@ -1,1 +1,9 @@
 # Data transformation
+
+Since the original table comes in with xlsx format and Chinese characters, we need to do the translation, mapping of characters to their metadata, and saving to a csv file for easier future use. 
+
+
+We web scrape the translation table and metadata table in `data_translation.R` as reference data tables. We scrape the English version and Chinese version of character names, weapon names, and artifact names and combine them to a mapping table. We also scrape the ranking and element as the metadata table.
+
+
+Then, we go through each xlsx file in 4 folders. Since each xlsx file has several sheets given the fact that one sheet can only held 1048576 rows of data, we have to implement a function to cascade sheets to a single data frame and then apply the mapping functions. We then save the transformed data frame with metadata to csv file afterwards.

@@ -7,4 +7,32 @@ site: bookdown::bookdown_site
 
 # Introduction
 
-Genshin Impact is an ARPG game developed and published by miHoYo. It is a Gacha game in which players spend in-game currency to receive random characters or weapons, like a loot-box mechanic. Since in-game currency is scarce, oftentimes players face the situation that they cannot draw all the characters or weapons from banners without spending their real-world money. Thus, making a wise decision on which character or weapon to draw is essential. 
+Genshin Impact is an ARPG game developed and published by miHoYo. It is a Gacha game in which players spend in-game currency to receive random characters or weapons, like a loot-box mechanic. Since in-game currency is scarce, oftentimes players face the situation that they cannot draw all the characters or weapons from banners without spending their real-world money, also known as micro-transaction. Thus, making a wise decision on which character to draw is essential. Now the question is: what metrics should we use to evaluate the worthiness of a character?
+  
+  We provide a brief introduction of background knowledge on the settings of the game below.
+
+- Characters have two **rankings**, 4-star and 5-star. A 5-star character is more scarce thus much more difficult to pull than a 4-star one. By saying more 
+difficult to pull, we mean a player has to invest more in-game currency to acquire a 5-star character.
+
+- Currently, there are 6 **elements** in the game: Pyro, Geo, Cryo, Electro, Anemo, and Hydro. All of the characters in the game are assigned to one of 
+the categories above.
+
+- Although not specified in the game, we can also roughly categorize characters into 3 categories: damage dealer, healer, and support.
+
+- A character has 4 attributes affecting his/her strength: **character level**, **constellation level**, **weapon**, and **artifact sets**. Among these attributes, the constellation level is more expensive to invest since it requires you to pull the same characters multiple times to increase it. In other words, you have to invest more precious in-game currency to level up the constellation whereas it is rather easy to level up the other three attributes.
+
+- A character’s **friendship level** increases if the player uses that character more often in the more relaxing and easier mode of the game, but it has no impact on the strength level of that character.
+
+- **Abyss** is the hardest end-game content in the game, yet grants a considerable amount of in-game currency. Each **Abyss** lasts for half-month.
+
+
+
+This project aims at providing evaluation insights and metrics based on battle data of **Abyss**. Whether a character plays an important role in helping gamer beat Abyss can be used as a standard for strength evaluation. 
+
+We will first introduce the process of gathering data from Chinese fan-made database, and how we translate and transform data to its appropriate type for easier use afterwards. We then will demonstrate how to relate characters' attributes, elements, and rankings into account when estimating a character's overall contribution to the clearance of **Abyss**. We also provide an interactive component so that a user can move the mouse to explore the dot on the Abyss appearance rate vs. owning rate plot. In the conclusion part, we will briefly discuss the learning experience and how we can improve our current metrics. 
+
+
+
+
+
+

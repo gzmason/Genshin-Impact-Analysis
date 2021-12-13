@@ -1,2 +1,26 @@
 # Data sources
 
+Our data is collected from a Chinese fan-made database:
+[abyss_data](https://drive.youngmoe.com/s/E1Cr?path=%2F%E6%95%B0%E6%8D%AE)
+
+This database collect data by inviting players who cleared Abyss to enter their id in the game, and gather their battle stats from miHoYo's official player community, [HoYoLAB](https://www.hoyolab.com/), as players can display their battle stats to public.
+
+
+Given the fact that it is a fan-made database, the data formats seem to be rather inconsistent. None the less, we discover 4 consecutive Abyss sessions that have consistent data format which we use as our primary data source. They are sept_late, oct_early, oct_late, and nov_early. Each of them of three major tables: battle_stats, character_artifact, and character_owning. 
+
+
+**battle_stats** contain the main battle data for Abyss. As a background check, Abyss has 4 floors, 9 - 12. Each floor has 3 levels. Each level require 2 groups to clear it. Each group can have maximum of 4 characters. This table record for each player, what characters he/she used to clear every level in each floor of Abyss, and the number of tries involved. 
+
+
+**character_artifact** records character artifact set for each character that a player owns. 
+
+
+**character_owning** records level, constellation level, and friendship level for each character that a player owns. 
+
+
+In addition to these raw data, we also need to have a reference table for our character metadata, such as ranking and element type, as another scope when analyzing our raw data. Also, since raw data comes from a Chinese database, we need to do the translation as well. 
+
+
+Fortunately, we found another fan-made database that contains all the information we want: [Honey Hunter](https://genshin.honeyhunterworld.com/db/char/characters/?lang=EN)
+
+We scrap from that website to do all the translation and extra metadata table.
