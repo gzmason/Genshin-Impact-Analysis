@@ -66,9 +66,9 @@
     .attr("class", "y label")
     .attr("text-anchor", "end")
     .attr("y", 5)
-    .attr("dy", ".75em")
+    .attr("dy", ".5em")
     .attr("transform", "rotate(-90)")
-    .text("Character Appearance Rate in Abyss");
+    .text("Percentage of Appearance in Abyss");
 
 		  var rowConverter = function (d) {
 		    	if (!isNaN(d.rate) && !isNaN(d.rate)) {
@@ -135,3 +135,7 @@
 					svg.select("text#nm").text("Error loading data.")
 					});
 		</script>
+
+This is an interactive scatter plot on Percentage of Appearance in the Abyss versus Character Owning Rate. The definition of Percentage of Appearance is the same as in previous plots -- number of Abyss challenges that players choose to use this character divided by total number of challenges players make. The definition of Character Owning Rate is how much percent of players own this character.
+
+Each point is one character. Points closer to the top are characters who appear more frequently in Abyss, and points closer to the right are characters who are owned by many players. By moving the mouse onto a point, the name of that character is shown.

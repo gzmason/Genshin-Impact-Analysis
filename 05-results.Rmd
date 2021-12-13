@@ -49,6 +49,8 @@ p1<-ggplot(data=rate, aes(x=n, y=factor(avatar, levels=rev(avatar_order)))) +
 p1
 ```
 
+The above Cleveland Dot Plot illustrates the percentage of appearance in the Abyss for each character. Also, the color illustrates how the rates change from Late September to Early November. From the plot, we can observe that popular characters such as Bennett, Xingqiu and Raiden Shogun (at the top of the plot) have been keeping high appearance rates, while characters like Aloy, Amber and Xinyan (at the bottom of the plot) are generally rare in the Abyss mode. The percentages for each character are unlikely to change by much from month to month, but there are some exceptions like Xiangling whose appearance percentages keep increasing from Late September to Early November.
+
 ```{r, echo=FALSE}
 character_owning_novEarly <- read.csv(file = 'data/nov_early/character_owning_translated.csv')
 ```
@@ -61,9 +63,12 @@ rate_and_constellation_novEarly <- merge(rate_novEarly,average_constellation_nov
 p2<-ggplot(data=rate_and_constellation_novEarly, aes(x=avg_constellation, y=n)) +
   geom_point() +
   labs(title="Percentage of Appearance versus Average Constellation", x="Average Constellation", y="Percentage of Appearance") +
-  geom_text(data=rate_and_constellation_novEarly,aes(label=avatar),hjust=0,vjust=1 ,check_overlap = TRUE)
+  geom_text(data=rate_and_constellation_novEarly,aes(label=avatar),hjust=0,vjust=1 ,check_overlap = TRUE) + theme(text = element_text(size = 30))
 p2
 ```
+
+This is a scatter plot of Percentage of Appearance versus Average Constellation of each character. Since Constellation costs resources, Average Constellation can indicate how many resources players spend on enhancing each character on average. We can observe that game characters are generally located at the four corners, which means that they can be divided into 4 categories.
+Bottom left corner are characters who players are not likely to spend resources in enhancing them and do not often appear in the Abyss. Bottom right corner are characters who players would generally spend resources in enhancing them but do not often use them in the Abyss. Top left corner are characters who many players use them in the Abyss without spending excessive resources on them (so they are "strong"). Top right corner are characters who appear frequently in the Abyss but players have spent many resources enhancing them.
 
 ```{r, echo=FALSE, fig.width=12, fig.height=5}
 average_friendship_novEarly <- character_owning_novEarly %>%
@@ -76,15 +81,19 @@ names(rate_and_constellation_and_friendship_novEarly)[2]<- "percentage_of_appear
 rate_and_constellation_and_friendship_novEarly <- subset(rate_and_constellation_and_friendship_novEarly, select = -c(time) )
 
 p3 <- GGally::ggparcoord(data = rate_and_constellation_and_friendship_novEarly, columns=c(2:4), scale="uniminmax")  +
-labs(title="Parallel Coordinate Plot on Percentage of Appearence & Average Constellation & Friendship", x="Character Indicators", y="Uniformized Statistics")
+labs(title="Parallel Coordinate Plot on Percentage of Appearence & Average Constellation & Friendship", x="Character Indicators", y="Uniformized Statistics") + theme(text = element_text(size = 20))
 p3
 ```
 
+In this parallel coordinate plot on percentage of appearance in the Abyss, average constellation and average friendship, each character is represented by a line. There is a trend that characters with high percentage of appearance and low average constellation have high average friendship. This means that players generally like those characters (indicated by high friendship) who are strong enough to appear frequently in the Abyss without requiring too many resources (indicated by low constellation).
+
 ```{r, echo=FALSE,fig.width=15, fig.height=15}
 p4 <- ggplot(data=character_owning_novEarly, aes(x=reorder(avatar, level, FUN = median), y=level)) + geom_boxplot() + coord_flip() +
-  labs(title="Boxplot on Character Levels", x="Character", y="Level")
+  labs(title="Boxplot on Character Levels", x="Character", y="Level") + theme(text = element_text(size = 30))
 p4
 ```
+
+This boxplot shows the distribution of character levels for each character. We can observe that more than 50% of players have levelled up characters like Zhongli, Xiao, Raiden Shogun and Kamisato Ayaka to the maximum level. Notice that those characters at the top are generally characters with high Abyss Appearance Rate as indicated by previous graphs. On the other hand, most players do not level up Lisa, Amber, Xinyan and Aloy very much. Notice that they are the ones who players are not likely to use in the Abyss.
 
 ```{r, echo=FALSE, fig.width=15, fig.height=12}
 numberOfPlayer <- nrow(unique(character_owning_novEarly[c("uid")]))
