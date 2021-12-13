@@ -2,6 +2,8 @@
 ```{r, echo=FALSE}
 library(ggplot2)
 library(tidyverse)
+```
+```{r, echo=FALSE}
 df_septLate <- read.csv(file = 'data/sept_late/battle_stats_translated.csv')
 dfNoLevel_septLate <- df_septLate %>% filter(level == 1)
 
@@ -82,4 +84,15 @@ p3
 p4 <- ggplot(data=character_owning_novEarly, aes(x=reorder(avatar, level, FUN = median), y=level)) + geom_boxplot() + coord_flip() +
   labs(title="Boxplot on Character Levels", x="Character", y="Level")
 p4
+```
+
+```{r, echo=FALSE, fig.width=15, fig.height=12}
+numberOfPlayer <- nrow(unique(character_owning_novEarly[c("uid")]))
+
+owningRate_novEarly <- character_owning_novEarly %>% group_by(avatar) %>% dplyr::summarize(rate =n()) %>% arrange(desc(rate))
+
+owningRate_novEarly$rate = owningRate_novEarly$rate / numberOfPlayer
+
+owning_and_appearance <- merge(owningRate_novEarly,rate_novEarly,by="avatar")
+write.csv(owning_and_appearance,"data/owning_and_appearance_rate.csv", row.names = FALSE)
 ```
