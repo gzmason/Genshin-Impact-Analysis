@@ -88,7 +88,7 @@ rate_usg <- rbind(rate_sept_late_usg, rate_oct_early_usg,
 
 rate_usg$time = fct_inorder(rate_usg$time)
 
-ggplot(data=rate_usg, aes(x=usage_rate, y=factor(avatar, levels = rev(avatar_order)))) +
+ggplot(data=rate_usg, aes(x=usage_rate, y=factor(avatar, levels = rev(avatar_order_usg)))) +
   geom_point(aes(color = time)) +
   labs(title="Percentage of Usage of Characters among all Abyss Challenges", 
        x="Percentage", y="Character")
@@ -102,6 +102,43 @@ The usage rate metric differ from appearance rate metric as it takes players inv
 
 We can also observe that majority of characters have a steady usage rate that does not vary much from month to month, yet there are exceptions as well. Sangonomiya Kokomi seems to gain huge increase in usage rate from September late to November early, which usually indicates thatr players invent more advanced and efficient technique to use this character. In such case, drawing this character seems to be reasonable given his/her improvement in usage rate.
 
+```{r, echo=FALSE}
+rate_usg_avg <- rate_usg %>% group_by(avatar) %>% 
+  dplyr::summarise_at(vars(usage_rate), list(usage_rate_avg = sum)) 
+
+rate_usg_avg$usage_rate_avg[rate_usg_avg$usage_rate_avg > 0] <- rate_usg_avg$usage_rate_avg/4
+
+char_metadata <- read.csv("data/character_element_ranking.csv")
+rate_usg_avg <- merge(x = rate_usg_avg, y = char_metadata, by.x = "avatar", by.y = "character")
+rate_usg_avg <- rate_usg_avg %>% arrange(desc(usage_rate_avg))
+rate_usg_avg$ranking <- as.character(rate_usg_avg$ranking)
+
+
+avatar_order <- rate_usg_avg$avatar
+
+ggplot(data=rate_usg_avg, aes(x=usage_rate_avg, y=factor(avatar, levels = rev(avatar_order)))) +
+  geom_point(aes(color = element, shape = ranking)) +
+  labs(title="Avg Percentage Usage of Characters among all Abyss Challenges", 
+       x="Percentage", y="Character") +
+  scale_color_manual(values=c("#00C9A7", "#00D2FC", "#845EC2", "#B58805", "#009EFA", "#F4131C"))
+```
+
+This graph illustrates the average percentage of usage for all characters across 4 sessions of Abyss, with additional information provided on character's metadata like ranking and element type. This is where things get a little bit interesting as we are now viewing from a different angle. 
+
+The first thing to notice is that among characters with high average usage rate, the majority of them are 5-star characters, or ranking of 5. This however, reflects the worthiness of a few 4-star characters in that region, namely Bennett, Xingqiu, Xiangling, and Diona. These 4-star characters shine in the area of average usage rate > 50%. Since 4-star characters require much less in-game currency to acquire, players should focus on getting these "cheap" 4-star characters as soon as possible. On the other hand, the majority of 4-star characters aggragate at very low usage region <10%. 
+
+The other insight derived from this graph is relation between element type and usage rate. The anemo and cyro elements seem to dominate the high usage rate region > 75%. Electro characters generally have an extremely low usage rate with the exception of Raiden Shogun. Hydro characters, while they are not in the top region, are actually performing quite well in the middle region 25% < usage rate < 75%. Geo characters suffer from the same problem as elecetro ones, they generally have low usage rate with the exception of Zhongli. Pyro characters have the most number of 5-star, yet most of them have mediocre usage rate, which indicates that it may not worth to draw a 5-star pyro character. 
+
+
+```{r}
+ggplot(rate_usg_avg, aes(x=usage_rate_avg, color= ranking, fill=ranking))+ 
+  geom_density(alpha=.2)+
+  labs(title="Density Curve of Avg Percentage Usage", 
+       x="average percentage usage", y="Density")
+```
+
+
+We can see from the density curve that majority of 4-star characters do not have high usage rate, while 5-star characters have a steady distribution. That actually gives a clear estimation of 4-star character worthiness: it is highly likely that a new 4-star character would not help player clear Abyss. For a 5-star character, however, things get complicated. The distribution is quite flat, meaning we have no idea whether next 5-star character worth drawin.
 
 ```{r, echo=FALSE}
 character_owning_novEarly <- read.csv(file = 'data/nov_early/character_owning_translated.csv')
