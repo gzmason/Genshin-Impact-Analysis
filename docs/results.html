@@ -33,7 +33,7 @@
   
 <link rel="prev" href="missing-values.html"/>
 <link rel="next" href="interactive-component.html"/>
-<script src="libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -167,12 +167,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1><span class="header-section-number">Chapter 5</span> Results</h1>
 <p><img src="finalproj_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>The above Cleveland Dot Plot illustrates the percentage of appearance in the Abyss for each character. Also, the color illustrates how the rates change from Late September to Early November. From the plot, we can observe that popular characters such as Bennett, Xingqiu and Raiden Shogun (at the top of the plot) have been keeping high appearance rates, while characters like Aloy, Amber and Xinyan (at the bottom of the plot) are generally rare in the Abyss mode. The percentages for each character are unlikely to change by much from month to month, but there are some exceptions like Xiangling whose appearance percentages keep increasing from Late September to Early November.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-16-1.png" width="1440" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p>The above Cleveland Dot Plot illustrates the usage rate for all characters. The usage rate is defined as:</p>
+<p><span class="math inline">\(usage \ rate = \frac{number\ of\ players\ using\ this\ character}{number\ of\ players\ owning\ this\ character}\)</span></p>
+<p>The usage rate metric differ from appearance rate metric as it takes players inventory into account. Due to the loot-box mechanism of the game, many players don’t have certain character, and that is not reflected on the appearance rate metric. By using usage rate, we debias the data in the way that even a character that fewer people own can have high usage rate. The most significant example is Kaedehara Kazuha. His appearance rate is only around 50%, possibly because he is a five-star character that not many people own, yet his usage rate is about an astounding 97%, indicating that people owning him would be almost certain to use him to clear Abyss. Therefore, by the definition of usage rate, we can conclude that higher usage rate means higher power level, as players would more likely to use these characters instead of those with lower usage rate.</p>
+<p>We can also observe that majority of characters have a steady usage rate that does not vary much from month to month, yet there are exceptions as well. Sangonomiya Kokomi seems to gain huge increase in usage rate from September late to November early, which usually indicates thatr players invent more advanced and efficient technique to use this character. In such case, drawing this character seems to be reasonable given his/her improvement in usage rate.</p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-17-1.png" width="1440" /></p>
 <p>This is a scatter plot of Percentage of Appearance versus Average Constellation of each character. Since Constellation costs resources, Average Constellation can indicate how many resources players spend on enhancing each character on average. We can observe that game characters are generally located at the four corners, which means that they can be divided into 4 categories.
 Bottom left corner are characters who players are not likely to spend resources in enhancing them and do not often appear in the Abyss. Bottom right corner are characters who players would generally spend resources in enhancing them but do not often use them in the Abyss. Top left corner are characters who many players use them in the Abyss without spending excessive resources on them (so they are “strong”). Top right corner are characters who appear frequently in the Abyss but players have spent many resources enhancing them.</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-17-1.png" width="1152" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-18-1.png" width="1152" /></p>
 <p>In this parallel coordinate plot on percentage of appearance in the Abyss, average constellation and average friendship, each character is represented by a line. There is a trend that characters with high percentage of appearance and low average constellation have high average friendship. This means that players generally like those characters (indicated by high friendship) who are strong enough to appear frequently in the Abyss without requiring too many resources (indicated by low constellation).</p>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-18-1.png" width="1440" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-19-1.png" width="1440" /></p>
 <p>This boxplot shows the distribution of character levels for each character. We can observe that more than 50% of players have levelled up characters like Zhongli, Xiao, Raiden Shogun and Kamisato Ayaka to the maximum level. Notice that those characters at the top are generally characters with high Abyss Appearance Rate as indicated by previous graphs. On the other hand, most players do not level up Lisa, Amber, Xinyan and Aloy very much. Notice that they are the ones who players are not likely to use in the Abyss.</p>
 
 </div>
@@ -236,6 +241,20 @@ gitbook.start({
 });
 </script>
 
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 
 </html>

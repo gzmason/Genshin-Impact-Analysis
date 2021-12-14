@@ -51,6 +51,58 @@ p1
 
 The above Cleveland Dot Plot illustrates the percentage of appearance in the Abyss for each character. Also, the color illustrates how the rates change from Late September to Early November. From the plot, we can observe that popular characters such as Bennett, Xingqiu and Raiden Shogun (at the top of the plot) have been keeping high appearance rates, while characters like Aloy, Amber and Xinyan (at the bottom of the plot) are generally rare in the Abyss mode. The percentages for each character are unlikely to change by much from month to month, but there are some exceptions like Xiangling whose appearance percentages keep increasing from Late September to Early November.
 
+
+```{r, echo=FALSE}
+get_usage_rate <- function(file_battle_stats, file_character_owning, month){
+  df_battle_stats <- read.csv(file = file_battle_stats) %>% filter(level == 1)
+  df_co <- read.csv(file = file_character_owning)
+  ch_own <- df_co %>% group_by(avatar) %>% dplyr::summarize(n =n()) %>% arrange(desc(n))
+  a <- df_battle_stats %>% group_by(uid) %>% count(avatar) 
+  a$n[a$n > 0] <- 1
+  battle_use <- a %>% ungroup %>% group_by(avatar) %>% dplyr::summarize(n =n()) %>% arrange(desc(n))
+  df <- merge(x = ch_own, y = battle_use, by.x = "avatar", by.y = "avatar")
+  df <- df %>% mutate(usage_rate = df$n.y / df$n.x)
+  df <- df %>% arrange(desc(usage_rate))
+  colnames(df) <- c("avatar", "own", "use", "usage_rate")
+  df$time <- month
+  return (df)
+}
+
+rate_sept_late_usg <- get_usage_rate("data/sept_late/battle_stats_translated.csv", 
+               'data/sept_late/character_owning_translated.csv', 'Sept late')
+
+rate_oct_early_usg <- get_usage_rate("data/oct_early/battle_stats_translated.csv", 
+               'data/oct_early/character_owning_translated.csv', 'Oct early')
+
+rate_oct_late_usg <- get_usage_rate("data/oct_late/battle_stats_translated.csv", 
+               'data/oct_late/character_owning_translated.csv', 'Oct late')
+
+rate_nov_early_usg <- get_usage_rate("data/nov_early/battle_stats_translated.csv", 
+               'data/nov_early/character_owning_translated.csv', 'Nov late')
+
+
+avatar_order_usg <- rate_nov_early_usg$avatar
+
+rate_usg <- rbind(rate_sept_late_usg, rate_oct_early_usg, 
+              rate_oct_late_usg , rate_nov_early_usg)
+
+rate_usg$time = fct_inorder(rate_usg$time)
+
+ggplot(data=rate_usg, aes(x=usage_rate, y=factor(avatar, levels = rev(avatar_order)))) +
+  geom_point(aes(color = time)) +
+  labs(title="Percentage of Usage of Characters among all Abyss Challenges", 
+       x="Percentage", y="Character")
+```
+
+The above Cleveland Dot Plot illustrates the usage rate for all characters. The usage rate is defined as:
+
+$usage \ rate = \frac{number\ of\ players\ using\ this\ character}{number\ of\ players\ owning\ this\ character}$
+
+The usage rate metric differ from appearance rate metric as it takes players inventory into account. Due to the loot-box mechanism of the game, many players don't have certain character, and that is not reflected on the appearance rate metric. By using usage rate, we debias the data in the way that even a character that fewer people own can have high usage rate. The most significant example is Kaedehara Kazuha. His appearance rate is only around 50%, possibly because he is a five-star character that not many people own, yet his usage rate is about an astounding 97%, indicating that people owning him would be almost certain to use him to clear Abyss. Therefore, by the definition of usage rate, we can conclude that higher usage rate means higher power level, as players would more likely to use these characters instead of those with lower usage rate. 
+
+We can also observe that majority of characters have a steady usage rate that does not vary much from month to month, yet there are exceptions as well. Sangonomiya Kokomi seems to gain huge increase in usage rate from September late to November early, which usually indicates thatr players invent more advanced and efficient technique to use this character. In such case, drawing this character seems to be reasonable given his/her improvement in usage rate.
+
+
 ```{r, echo=FALSE}
 character_owning_novEarly <- read.csv(file = 'data/nov_early/character_owning_translated.csv')
 ```
