@@ -1,6 +1,7 @@
 # Conclusion
 
 The project serves as a great opportunity for us to apply what we learned in data analysis and visualization to a topic of our interests, Genshin Impact. We mainly want to derive insights on how to evaluate a character strength based on battle data against hardest end-game content, the Abyss. There are few key takeaways:
+
 - 4-star characters generally perform quite poor in terms of usage rate, which indicates that players owning these characters would probably not use them in clearing the Abyss. Nonetheless, there are a few exceptions that have extraordinarily high usage rate even than other 5-star characters, namely Bennett, Xingqiu, Xiangling, and Diona. It is recommended that players should try to acquire these characters.
 
 - A few 5-star characters lie in the high usage rate region > 75%. These characters should also be considered worth drawing. 
